@@ -4,12 +4,17 @@ import Home from "../src/pages/student/Home";
 import CourseDetails from "./pages/student/CourseDetails";
 import CoursesList from "./pages/student/CoursesList";
 import MyEnrollments from "./pages/student/MyEnrollments";
-import Loading from "./components/educator/student/Loading";
+import Loading from "./components/student/Loading";
 import Player from "./pages/student/Player";
+import Educator from "./pages/educator/Educator";
+import Dashboard from "./pages/educator/Dashboard";
+import MyCourses from "./pages/educator/MyCourses";
+import StudentsEnrolled from "./pages/educator/StudentsEnrolled";
+import AddCourses from "./pages/educator/AddCourses";
 
 const App = () => {
   return (
-    <div>
+    <div className=" text-default min-h-screen bg-slate-600 ">
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/course-list" element={<CoursesList />} />
@@ -18,6 +23,12 @@ const App = () => {
         <Route path="/my-enrollments" element={<MyEnrollments />} />
         <Route path="/player/:courseId" element={<Player />} />
         <Route path="/loading/:path" element={<Loading />} />
+        <Route path="/educator" element={<Educator />}>
+          <Route path="educator" element={<Dashboard />} />
+          <Route path="add-course" element={<AddCourses />} />
+          <Route path="my-courses" element={<MyCourses />} />
+          <Route path="student-enrolled" element={<StudentsEnrolled />} />
+        </Route>
       </Routes>
     </div>
   );
