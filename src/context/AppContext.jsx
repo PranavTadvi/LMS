@@ -32,18 +32,11 @@ export const AppContextProvider = (props) => {
   useEffect(() => {
     fetchAllCourses();
   }, []);
-  const value = {
-    currency,
-    allCourses,
-    navigate,
-    calculateRating,
-    isEducator,
-    setIsEducator,
-  };
+
   //Function to calculate Course Chapter TIme
   const calculateChapterTime = (chapter) => {
     let time = 0;
-    chapter.chapterContext.map((lecture) => (time += lecture.lectureDuration));
+    chapter.chapterContent.map((lecture) => (time += lecture.lectureDuration));
     return humanizeDuration(time * 60 * 1000, { units: ["h", "m"] });
   };
 
@@ -53,10 +46,34 @@ export const AppContextProvider = (props) => {
     let time = 0;
 
     course.courseContent.map((chapter) =>
-      chapter.chapterContext.map((lecture) => (time += lecture.lectureDuration))
+      chapter.chapterContent.map((lecture) => (time += lecture.lectureDuration))
     );
     return humanizeDuration(time * 60 * 1000, { units: ["h", "m"] });
   };
+
+  //Function to calculate to no of Lectures in the course
+  const calculateNoOfLectures = () => {
+    let totalLectures = 0;
+    course.courseContent.forEach((chapter) => {
+      if (Array.isArray(chapter.chapterContent)) {
+        totalLectures += chapter.chapterContent.length;
+      }
+    });
+    return totalLectures;
+  };
+
+  const value = {
+    currency,
+    allCourses,
+    navigate,
+    calculateRating,
+    isEducator,
+    setIsEducator,
+    calculateChapterTime,
+    calculateCourseDuration,
+    calculateNoOfLectures,
+  };
+
   return (
     <AppContext.Provider value={value}>{props.children}</AppContext.Provider>
   );
