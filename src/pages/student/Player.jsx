@@ -3,12 +3,15 @@ import { AppContext } from "../../context/AppCOntext";
 import { useParams } from "react-router-dom";
 import { assets } from "../../assets/assets";
 import humanizeDuration from "humanize-duration";
+import YouTube from "react-youtube";
+import Footer from "../../components/student/Footer";
+import Rating from "../../components/student/Rating";
 
 const Player = () => {
   const { enrolledCourses, calculateChapterTime } = useContext(AppContext);
   const { courseId } = useParams();
   const [courseData, setCourseData] = useState(null);
-  const [openSection, setOpenSection] = useState({});
+  const [openSections, setOpenSections] = useState({});
   const [playerData, setPlayerData] = useState(null);
 
   const getCourseData = () => {
@@ -19,15 +22,14 @@ const Player = () => {
     });
   };
   const toggleSection = (index) => {
-    setOpenSection((prev) => ({
+    setOpenSections((prev) => ({
       ...prev,
       [index]: !prev[index],
     }));
   };
   useEffect(() => {
     getCourseData();
-  }, []);
-
+  }, [enrolledCourses]);
   return (
     <>
       <div className="p-4 sm:p-10 flrx flex-col-reverse md:grid md:grid-cols-2 gap-10 md:px-36">
@@ -50,7 +52,7 @@ const Player = () => {
                         src={assets.down_arrow_icon}
                         alt="down_arrow_icon"
                         className={`transform transition-transform ${
-                          openSection[index] ? "rotate-180" : ""
+                          openSections[index] ? "rotate-180" : ""
                         }`}
                       />
                       <p className=" font-medium md:text-base text-sm">
@@ -64,7 +66,7 @@ const Player = () => {
                   </div>
                   <div
                     className={`overflow-hidden transition-all duration-3000 ${
-                      openSection[index] ? "max-h-96" : "max-h-0"
+                      openSections[index] ? "max-h-96" : "max-h-0"
                     }`}
                   >
                     <ul className=" list-disc md:pl-10 pl-4 pr-4 py-2 text-gray-600 border-t border-gray-300">
@@ -109,11 +111,37 @@ const Player = () => {
                 </div>
               ))}
           </div>
+          <div className="flex items-center gap-2 py-3 mt-10">
+            <h1 className=" text-xl font-bold">Rate this course:</h1>
+            <Rating initialRating={0} />
+          </div>
         </div>
 
         {/* Right column */}
-        <div className=""></div>
+        <div className="md:mt-10">
+          {playerData ? (
+            <div>
+              <YouTube
+                videoId={playerData.lectureUrl.split("/").pop()}
+                opts={{ playerVars: { autoplay: 1 } }}
+                iframeClassName="w-full aspect-video"
+              />
+              <div className=" flex justify-between items-center mt-1">
+                <p>
+                  {playerData.chapter}.{playerData.lecture}
+                  {playerData.lectureTitle}
+                </p>
+                <button className=" text-blue-600">
+                  {false ? "completed" : "Mark complete"}
+                </button>
+              </div>
+            </div>
+          ) : (
+            <img src={courseData ? courseData.courseThumbnail : null} alt="" />
+          )}
+        </div>
       </div>
+      <Footer />
     </>
   );
 };
