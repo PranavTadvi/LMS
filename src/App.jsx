@@ -10,8 +10,9 @@ import Educator from "./pages/educator/Educator";
 import Dashboard from "./pages/educator/Dashboard";
 import MyCourses from "./pages/educator/MyCourses";
 import StudentsEnrolled from "./pages/educator/StudentsEnrolled";
-import AddCourses from "./pages/educator/AddCourses";
+import AddCourse from "./pages/educator/AddCourse";
 import Navbar from "./components/student/Navbar";
+import "quill/dist/quill.snow.css";
 
 const App = () => {
   const isEducatorRoute = useMatch("/educator/*");
@@ -30,7 +31,7 @@ const App = () => {
         <Route path="/loading/:path" element={<Loading />} />
         <Route path="/educator" element={<Educator />}>
           <Route path="/educator" element={<Dashboard />} />
-          <Route path="add-course" element={<AddCourses />} />
+          <Route path="add-course" element={<AddCourse />} />
           <Route path="my-courses" element={<MyCourses />} />
           <Route path="student-enrolled" element={<StudentsEnrolled />} />
         </Route>
