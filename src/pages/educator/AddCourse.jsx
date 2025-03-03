@@ -37,16 +37,65 @@ const AddCourse = () => {
       }
     } else if (action === "remove") {
       setChapters(
-        chapters.filter((chapter) => {
-          chapter.chapterId !== chapterId;
-        })
+        chapters.filter((chapter) => chapter.chapterId !== chapterId)
       );
-    }else if(action === "toggle"){
-      setChapters(chapters.map((chapter)=>{
-        chapter.chapterId === chapterId ? {...chapter,collapsed : !chapter.collapsed } : chapter
-      }))
+    } else if (action === "toggle") {
+      setChapters(
+        chapters.map((chapter) =>
+          chapter.chapterId === chapterId
+            ? { ...chapter, collapsed: !chapter.collapsed }
+            : chapter
+        )
+      );
     }
   };
+
+  const handleLecture = (action, chapterId, lectureIndex) => {
+    if (action === "add") {
+      setCurrentChapterId(chapterId);
+      setShowPopup(true);
+    } else if (action === "remove") {
+      setChapters(
+        chapters.map((chapter) => {
+          if (chapter.chapterId === chapterId) {
+            chapter.chapterContent.splice(lectureIndex, 1);
+          }
+          return chapter;
+        })
+      );
+    }
+  };
+
+  const addLecture = () => {
+    setChapters(
+      chapters.map((chapter) => {
+        if (chapter.chapterId === currentChapterId) {
+          const newLecture = {
+            ...lectureDetails,
+            lectureOrder:
+              chapter.chapterContent.length > 0
+                ? chapter.chapterContent.slice(-1)[0].lectureOrder + 1
+                : 1,
+            lectureId: uniqid(),
+          };
+          chapter.chapterContent.push(newLecture);
+        }
+        return chapter;
+      })
+    );
+    setShowPopup(false);
+    setLectureDetails({
+      lecutrTitle: "",
+      lectureDuration: "",
+      lectureUrl: "",
+      isPreviewFree: false,
+    });
+  };
+
+  const handleSubmit = async (e) => {
+    e.prevrntDefault();
+  };
+
   useEffect(() => {
     //initate quill only once
     if (!quillRef.current && editorRef.current) {
@@ -57,7 +106,10 @@ const AddCourse = () => {
   }, []);
   return (
     <div className=" h-screen overflow-scroll flex flex-col items-start justify-between md:p-8 md:pb-0 p-4 pt-8 pb-0">
-      <form className=" flex flex-col gap-4 max-w-md w-full text-gray-500">
+      <form
+        onSubmit={handleSubmit}
+        className=" flex flex-col gap-4 max-w-md w-full text-gray-500"
+      >
         <div className=" flex flex-col gap-1">
           <p>Course Title</p>
           <input
@@ -140,9 +192,11 @@ const AddCourse = () => {
                   <img
                     src={assets.dropdown_icon}
                     alt=""
+                    width={14}
                     className={`mr-2 cursor-pointer transition-all ${
                       chapter.collapsed && "-rotate-90"
                     }`}
+                    onClick={() => handleChapter("toggle", chapter.chapterId)}
                   />
                   <span className=" font-semibold">
                     {chapterIndex + 1} {chapter.chapterTitle}
@@ -153,6 +207,7 @@ const AddCourse = () => {
                   src={assets.cross_icon}
                   alt=""
                   className=" cursor-pointer"
+                  onClick={() => handleChapter("remove", chapter.chapterId)}
                 />
               </div>
               {!chapter.collapsed && (
@@ -163,7 +218,7 @@ const AddCourse = () => {
                       className=" flex justify-between items-center mb-2"
                     >
                       <span>
-                        {lectureDuration + 1} {lecture.lecutrTitle} -{" "}
+                        {lecture.lectureDuration + 1} {lecture.lecutrTitle} -
                         {lecture.lectureDuration} mins -
                         <a
                           href={lecture.lectureUrl}
@@ -178,10 +233,20 @@ const AddCourse = () => {
                         src={assets.cross_icon}
                         alt=""
                         className=" cursor-pointer"
+                        onClick={() =>
+                          handleLecture(
+                            "remove",
+                            chapter.chapterId,
+                            lectureIndex
+                          )
+                        }
                       />
                     </div>
                   ))}
-                  <div className=" inline-flex bg-gray-100 p-2 rounded cursor-pointer mt-2">
+                  <div
+                    onClick={() => handleLecture("add", chapter.chapterId)}
+                    className=" inline-flex bg-gray-100 p-2 rounded cursor-pointer mt-2"
+                  >
                     + Add Lectures
                   </div>
                 </div>
@@ -216,7 +281,7 @@ const AddCourse = () => {
                 </div>
 
                 <div className="mb-2">
-                  <p>Duration {minutes}</p>
+                  <p>Duration minutes</p>
                   <input
                     type="text"
                     onChange={(e) =>
@@ -262,6 +327,7 @@ const AddCourse = () => {
                 <button
                   type="button"
                   className="w-full bg-blue-400 text-white px-4 py-2 rounded"
+                  onClick={addLecture}
                 >
                   Add
                 </button>
@@ -278,6 +344,7 @@ const AddCourse = () => {
         <button
           type="submit"
           className=" bg-black text-white w-max py-2.5 px-8 rounded my-4"
+          onClick={addLecture}
         >
           Add
         </button>
