@@ -173,11 +173,11 @@ export const addUserRating = async (req,res)=>{
       course.courseRatings.push({userId,rating})
     }
 
-    await courseData.save()
+    await course.save()
     return     res.json({ success: true, message:"Rating added." });
 
   } catch (error) {
-    return     res.json({ success: false, message:error.message });
+    return res.json({ success: false, message:error.message });
 
   }
 }
