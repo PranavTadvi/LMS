@@ -1,7 +1,7 @@
 import { clerkClient } from "@clerk/express";
 import Course from "../models/Course.js";
 import { v2 as cloudinary } from "cloudinary";
-import { Purchese } from "../models/Purchase.js";
+import { Purchase } from "../models/Purchase.js";
 
 //update role to educator
 export const updateRoleToEducator = async (req, res) => {
@@ -117,7 +117,7 @@ export const getEnrolledStudentsData = async (req, res) => {
     const courses = await Course.find(educator);
     const courseIds = courses.map((course) => course._id);
 
-    const purchases = await Purchese.find({
+    const purchases = await Purchase.find({
       courseId: { $in: courseIds },
       status: "completed",
     })

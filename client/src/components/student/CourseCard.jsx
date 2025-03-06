@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import { assets } from "../../assets/assets";
-import { AppContext } from "../../context/AppCOntext";
+import { AppContext } from "../../context/AppContext";
 import { Link } from "react-router-dom";
 
 const CourseCard = ({ course }) => {
@@ -15,7 +15,7 @@ const CourseCard = ({ course }) => {
       <img src={course.courseThumbnail} alt="" className="w-full" />
       <div className="p-3 text-left ">
         <h3 className=" text-base font-semibold">{course.courseTitle}</h3>
-        <p className="text-gray-500">LMS</p>
+        <p className="text-gray-500">{course.educator.name}</p>
         <div className=" flex items-center space-x-2 ">
           <p>{calculateRating(course)}</p>
           <div className=" flex ">
