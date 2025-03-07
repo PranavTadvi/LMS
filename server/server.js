@@ -19,15 +19,18 @@ await connectDB();
 await connectCloudinary();
 
 //Middleware
+express.json()
 app.use(cors());
 app.use(clerkMiddleware());
 
 //Routes
 app.get("/", (req, res) => res.send("API working"));
-app.post("/clerk", express.json(), clerkWebhooks);
-app.use("/api/educator", express.json(), educatorRouter);
-app.use("/api/course", express.json(), courseRouter);
-app.use("/api/user", express.json(), userRouter);
+
+app.post("/clerk", clerkWebhooks);
+app.use("/api/educator", educatorRouter);
+app.use("/api/course", courseRouter);
+app.use("/api/user", userRouter);
+
 app.post("/stripe", express.raw({ type: application / json }), stripeWebhooks);
 
 //Port

@@ -9,8 +9,6 @@ export const getUserData = async (req, res) => {
   try {
     const userId = req.auth.userId;
     const user = await User.findById(userId);
-    console.log(req.auth.userId);
-    console.log(user);
 
     if (!user) {
       return res.json({ sucess: false, message: "User Not Found" });

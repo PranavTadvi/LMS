@@ -22,7 +22,7 @@ export const AppContextProvider = (props) => {
   //Fetch all courses
   const fetchAllCourses = async () => {
     try {
-      const { data } = await axios.get(backendUrl + "/api/course/all");
+      const { data } = await axios.get(backendUrl + "/course/all");
       if (data.success) {
         setAllCourses(data.courses);
       } else {
@@ -39,8 +39,7 @@ export const AppContextProvider = (props) => {
     }
     try {
       const token = await getToken();
-
-      const { data } = await axios.get(backendUrl + "/api/user/data", {
+      const { data } = await axios.get(backendUrl + "/user/data", {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -104,14 +103,14 @@ export const AppContextProvider = (props) => {
     try {
       const token = await getToken();
       const { data } = await axios.get(
-        backendUrl + "/api/user/enrolled-courses",
+        backendUrl + "/user/enrolled-courses",
         {
           Authorization: `Bearer ${token}`,
         }
       );
 
       if (data.success) {
-        setEnrolledCourses(data.enrolledCourses.reverse());
+        setEnrolledCourses(data?.enrolledCourses?.reverse());
       } else {
         toast.error(data.message);
       }

@@ -17,26 +17,30 @@ const CourseDetails = () => {
   const [isAlreadyEnrolled, setIsAlredyEnrolled] = useState(false);
   const [playerData, setPlayerData] = useState(null);
   const {
-    allCourses,
     calculateRating,
     calculateChapterTime,
     currency,
     calculateCourseDuration,
     calculateNoOfLectures,
-    backenUrl,
+    backendUrl,
     userData,
     getToken,
   } = useContext(AppContext);
 
   const fetchCourseData = async () => {
     try {
-      const { data } = await axios.get(backenUrl + "/api/course/", id);
-      if (data.seccess) {
+      const { data } = await axios.get(`${backendUrl}/course/${id}`);
+
+      console.log("API Response:", data);
+
+      if (data.success) {
         setCourseData(data.courseData);
       } else {
+        console.error("Course data not found:", data.message);
         toast.error(data.message);
       }
     } catch (error) {
+      console.error("Error fetching course data:", error);
       toast.error(error.message);
     }
   };
@@ -53,7 +57,7 @@ const CourseDetails = () => {
       const token = await getToken();
 
       const { data } = await axios.post(
-        backenUrl + "/api/user/purchase",
+        backenUrl + "/user/purchase",
         {
           courseId: courseData._id,
         },
@@ -76,17 +80,18 @@ const CourseDetails = () => {
   };
   useEffect(() => {
     fetchCourseData();
-  }, []);
+  }, [id]);
+
   useEffect(() => {
     if (userData && courseData) {
-      setIsAlredyEnrolled(userData.enrolledCourses.includes(courseData._id));
+      setIsAlredyEnrolled(userData?.enrolledCourses?.includes(courseData?._id));
     }
   }, [userData, courseData]);
 
   const toggleSection = (index) => {
     setOpenSection((prev) => ({
       ...prev,
-      [index]: !prev[index],
+      [index]: !prev?.[index],
     }));
   };
 
@@ -100,11 +105,14 @@ const CourseDetails = () => {
             {courseData.courseTitle}
           </h1>
           <p
-            className=" pt-4 md:text-base text-sm"
+            className="pt-4 md:text-base text-sm"
             dangerouslySetInnerHTML={{
-              __html: courseData.courseDescription.slice(0, 200),
+              __html: courseData?.courseDescription
+                ? courseData.courseDescription.slice(0, 200) + "..."
+                : "No description available.",
             }}
           ></p>
+
           {/* review and rating */}
           <div className=" flex items-center space-x-2 pt-3 pb-1 text-sm ">
             <p>{calculateRating(courseData)}</p>
@@ -122,16 +130,16 @@ const CourseDetails = () => {
               ))}
             </div>
             <p className=" text-blue-600">
-              {courseData.courseRatings.length}{" "}
+              {courseData.courseRatings.length}
               {courseData.courseRatings.length ? "rating" : ""}
             </p>
             <p>
-              {courseData.enrolledStudents.length}{" "}
+              {courseData.enrolledStudents.length}
               {courseData.enrolledStudents.length > 1 ? "students" : "student"}
             </p>
           </div>
           <p className="text-sm">
-            Course by{" "}
+            Course by
             <span className="text-blue-600 underline">
               {courseData.educator.name}
             </span>

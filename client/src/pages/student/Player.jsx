@@ -1,23 +1,40 @@
 import React, { useCallback, useContext, useEffect, useState } from "react";
-import { AppContext } from "../../context/AppCOntext";
+import { AppContext } from "../../context/AppContext";
 import { useParams } from "react-router-dom";
 import { assets } from "../../assets/assets";
 import humanizeDuration from "humanize-duration";
 import YouTube from "react-youtube";
 import Footer from "../../components/student/Footer";
 import Rating from "../../components/student/Rating";
+import axios from "axios";
+import { toast } from "react-toastify";
+import Loading from "../../components/student/Loading";
 
 const Player = () => {
-  const { enrolledCourses, calculateChapterTime } = useContext(AppContext);
+  const {
+    enrolledCourses,
+    calculateChapterTime,
+    getToken,
+    userData,
+    backendUrl,
+    fetchEnrolledCourses,
+  } = useContext(AppContext);
   const { courseId } = useParams();
   const [courseData, setCourseData] = useState(null);
   const [openSections, setOpenSections] = useState({});
   const [playerData, setPlayerData] = useState(null);
+  const [progrssData, setProgressData] = useState(null);
+  const [initialRating, setInitialRating] = useState(0);
 
   const getCourseData = () => {
     enrolledCourses.map((course) => {
       if (course._id === courseId) {
         setCourseData(course);
+        course.courseRatings.map((item) => {
+          if (item.UserId === userData._id) {
+            setInitialRating(item.rating);
+          }
+        });
       }
     });
   };
@@ -28,9 +45,70 @@ const Player = () => {
     }));
   };
   useEffect(() => {
-    getCourseData();
+    if (enrolledCourses.length > 0) {
+      getCourseData();
+    }
   }, [enrolledCourses]);
-  return (
+
+  const markLectureAsCompleted = async (lectureId) => {
+    try {
+      const token = await getToken();
+
+      const { data } = await axios.post(
+        backendUrl + "/user/update-course-progress",
+        { courseId, lectureId },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      if (data.success) {
+        toast.success(data.message);
+        getCourseProgress();
+      } else {
+        toast.error(data.error);
+      }
+    } catch (error) {
+      toast.error(error.message);
+    }
+  };
+
+  const getCourseProgress = async () => {
+    try {
+      const token = await getToken();
+      const { data } = await axios.post(
+        backendUrl + "/user/get-course-progress",
+        { courseId },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      if (data.success) {
+        toast.success(data.progrssData);
+      } else {
+        toast.error(data.error);
+      }
+    } catch (error) {
+      toast.error(error.message);
+    }
+  };
+
+  const handleRate = async (rating) => {
+    const token = await getToken();
+    const { data } = await axios.post(
+      backendUrl + "/user/get-course-progress",
+      { courseId, rating },
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+    if (data.success) {
+      toast.success(data.message);
+      fetchEnrolledCourses();
+    } else {
+      toast.error(data.error);
+    }
+  };
+
+  useEffect(() => {
+    getCourseProgress();
+  }, []);
+  return courseData ? (
     <>
       <div className="p-4 sm:p-10 flrx flex-col-reverse md:grid md:grid-cols-2 gap-10 md:px-36">
         {/* Left column */}
@@ -74,7 +152,12 @@ const Player = () => {
                         <li key={i} className=" flex items-start gap-2 py-1">
                           <img
                             src={
-                              false ? assets.blue_tick_icon : assets.play_icon
+                              progrssData &&
+                              progrssData.lectureCompleted.includes(
+                                lecture.lectureId
+                              )
+                                ? assets.blue_tick_icon
+                                : assets.play_icon
                             }
                             alt="play_icon"
                             className="w-4 h-4 mt-1"
@@ -113,7 +196,7 @@ const Player = () => {
           </div>
           <div className="flex items-center gap-2 py-3 mt-10">
             <h1 className=" text-xl font-bold">Rate this course:</h1>
-            <Rating initialRating={0} />
+            <Rating initialRating={initialRating} onRate={handleRate} />
           </div>
         </div>
 
@@ -131,8 +214,14 @@ const Player = () => {
                   {playerData.chapter}.{playerData.lecture}
                   {playerData.lectureTitle}
                 </p>
-                <button className=" text-blue-600">
-                  {false ? "completed" : "Mark complete"}
+                <button
+                  className=" text-blue-600"
+                  onClick={() => markLectureAsCompleted(playerData.lectureId)}
+                >
+                  {progrssData &&
+                  progrssData.lectureCompleted.includes(playerData.lectureId)
+                    ? "completed"
+                    : "Mark complete"}
                 </button>
               </div>
             </div>
@@ -143,6 +232,8 @@ const Player = () => {
       </div>
       <Footer />
     </>
+  ) : (
+    <Loading />
   );
 };
 

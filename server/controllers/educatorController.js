@@ -24,7 +24,6 @@ export const updateRoleToEducator = async (req, res) => {
 export const addCourse = async (req, res) => {
   try {
     const { courseData } = req.body;
-    console.log(courseData);
 
     const imageFile = req.file;
     const educatorId = req.auth.userId;
@@ -41,7 +40,6 @@ export const addCourse = async (req, res) => {
     await newCourse.save();
     res.json({ success: true, message: "Course Added" });
   } catch (error) {
-    console.log(error);
     res.json({ success: false, message: error.message });
   }
 };
@@ -69,7 +67,7 @@ export const educatorDashboardData = async (req, res) => {
     const courseIds = courses.map((course) => course._id);
 
     //Calculate total earning from purchase
-    const purchases = await Purchese.find({
+    const purchases = await Purchase.find({
       courseId: { $in: courseIds },
       status: "completed",
     });

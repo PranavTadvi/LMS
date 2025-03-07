@@ -1,11 +1,15 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import uniqid from "uniqid";
 import Quill from "quill";
 import { assets } from "../../assets/assets";
+import { AppContext } from "../../context/AppContext";
+import { toast } from "react-toastify";
+import axios from "axios";
 
 const AddCourse = () => {
   const quillRef = useRef(null);
   const editorRef = useRef(null);
+  const { backedUrl, getToken } = useContext(AppContext);
 
   const [courseTitle, setCourseTitle] = useState("");
   const [coursePrice, setCoursePrice] = useState(0);
@@ -93,7 +97,46 @@ const AddCourse = () => {
   };
 
   const handleSubmit = async (e) => {
-    e.prevrntDefault();
+    try {
+      e.prevrntDefault();
+      if (!image) {
+        toast.error("THumbnail Not Selected");
+      }
+
+      const couseData = {
+        courseTitle,
+        courseDescription: quillRef.current.root.innerHTML,
+        coursePrice: Number(coursePrice),
+        discount: Number(discount),
+        courseContent: chapters,
+      };
+
+      const formData = new FormData();
+      formData.append("courseData", JSON.stringify(couseData));
+      formData.append("image", image);
+
+      const token = await getToken();
+
+      const { data } = await axios.post(
+        backedUrl + "/educator/add-course",
+        formData,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      if (data.success) {
+        toast.success(data.message);
+        setCourseTitle("");
+        setCoursePrice(0);
+        setDiscount(0);
+        setImage(null);
+        setChapters([]);
+        quillRef.current.root.innerHTML = "";
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      toast.error(error.message);
+    }
   };
 
   useEffect(() => {
@@ -165,11 +208,11 @@ const AddCourse = () => {
             </label>
           </div>
         </div>
-
+  
         <div className=" flex flex-col gap-1">
           <p>Discount %</p>
           <input
-            onChange={(e) => setDiscount(e, target.value)}
+            onChange={(e) => setDiscount(e.target.value)}
             value={discount}
             type="number"
             placeholder="0"
