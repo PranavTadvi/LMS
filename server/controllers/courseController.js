@@ -20,8 +20,6 @@ export const getCourseId = async (req, res) => {
   const { id } = req.params;
   try {
     const courseData = await Course.findById(id).populate({ path: "educator" });
-    console.log(id);
-    console.log(courseData);
 
     //Remove lectureUrl if isPreviewFree is false
 

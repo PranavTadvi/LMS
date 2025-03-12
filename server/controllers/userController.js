@@ -37,6 +37,8 @@ export const userEnrolledCourses = async (req, res) => {
 export const purchaseCourse = async (req, res) => {
   try {
     const { courseId } = req.body;
+    console.log(courseId);
+
     const { origin } = req.headers;
     const userId = req.auth.userId;
     const userData = await User.findById(userId);
@@ -53,13 +55,14 @@ export const purchaseCourse = async (req, res) => {
         (courseData.discount * courseData.coursePrice) / 100
       ).toFixed(2),
     };
+    console.log(purchaseData);
 
     const newPurchase = await Purchase.create(purchaseData);
 
     //Stripe Gatway Initialize
 
     const stripeInstance = new Stripe(process.env.STRIPE_SECRET_KEY);
-    const currency = process.env.toLowerCase();
+    const currency = process.env.CURRENCY.toLowerCase();
 
     //Creating line items for Stripe
 
@@ -67,9 +70,11 @@ export const purchaseCourse = async (req, res) => {
       {
         price_data: {
           currency,
-          name: courseData.courseTitle,
+          product_data: {
+            name: courseData.courseTitle,
+          },
+          unit_amount: Math.floor(newPurchase.amount) * 100,
         },
-        unit_amount: Math.floor(newPurchase.amount) * 100,
         quantity: 1,
       },
     ];
@@ -84,7 +89,7 @@ export const purchaseCourse = async (req, res) => {
       },
     });
 
-    res.json({ success: true, session_url: session_url });
+    res.json({ success: true, session_url: session.url });
   } catch (error) {
     res.json({ success: false, message: error.message });
   }

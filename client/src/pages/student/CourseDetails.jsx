@@ -31,8 +31,6 @@ const CourseDetails = () => {
     try {
       const { data } = await axios.get(`${backendUrl}/course/${id}`);
 
-      console.log("API Response:", data);
-
       if (data.success) {
         setCourseData(data.courseData);
       } else {
@@ -48,16 +46,17 @@ const CourseDetails = () => {
   const enrollCourse = async () => {
     try {
       if (!userData) {
-        return toast.warning("Login ti Enroll");
+        return toast.warning("Login to Enroll");
       }
       if (isAlreadyEnrolled) {
         return toast.warning("Aready Enrolled");
       }
+      console.log(courseData._id);
 
       const token = await getToken();
 
       const { data } = await axios.post(
-        backenUrl + "/user/purchase",
+        backendUrl + "/user/purchase",
         {
           courseId: courseData._id,
         },
@@ -67,6 +66,7 @@ const CourseDetails = () => {
           },
         }
       );
+      console.log(data);
 
       if (data.success) {
         const { session_url } = data;

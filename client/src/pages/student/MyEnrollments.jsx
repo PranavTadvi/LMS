@@ -12,7 +12,7 @@ const MyEnrollments = () => {
     navigate,
     userData,
     fetchUserEnrolledCourses,
-    backedUrl,
+    backendUrl,
     getToken,
     calculateNoOfLectures,
   } = useContext(AppContext);
@@ -21,16 +21,16 @@ const MyEnrollments = () => {
 
   const getCourseProgress = async () => {
     try {
-      const token = getToken();
+      const token = await getToken();
       const tempProgressArray = await Promise.all(
-        enrolledCourses.map(async (course) => {
+        enrolledCourses?.map(async (course) => {
           const { data } = await axios.post(
-            `${backedUrl}/user/get-course-progress`,
+            `${backendUrl}/user/get-course-progress`,
             { courseId: course._id },
             { headers: { Authorization: `Bearer ${token}` } }
           );
-
-          let lectureCompleted = data.progressData
+          let totalLectures = calculateNoOfLectures(course);
+          const lectureCompleted = data.progressData
             ? data.progressData.lectureCompleted.length
             : 0;
 
@@ -68,7 +68,7 @@ const MyEnrollments = () => {
             </tr>
           </thead>
           <tbody className="text-gray-700">
-            {enrolledCourses.map((course, index) => (
+            {enrolledCourses?.map((course, index) => (
               <tr key={index} className=" border-b border-gray-500/20">
                 <td className=" md:px-4 pl-2 md:pl-4 py-3 flex items-center space-x-3">
                   <img

@@ -21,8 +21,11 @@ export const AppContextProvider = (props) => {
 
   //Fetch all courses
   const fetchAllCourses = async () => {
+    console.log(await getToken());
+
     try {
       const { data } = await axios.get(backendUrl + "/course/all");
+
       if (data.success) {
         setAllCourses(data.courses);
       } else {
@@ -102,12 +105,10 @@ export const AppContextProvider = (props) => {
   const fetchUserEnrolledCourses = async () => {
     try {
       const token = await getToken();
-      const { data } = await axios.get(
-        backendUrl + "/user/enrolled-courses",
-        {
-          Authorization: `Bearer ${token}`,
-        }
-      );
+      const { data } = await axios.get(backendUrl + "/user/enrolled-courses", {
+        Authorization: `Bearer ${token}`,
+      });
+      console.log(data);
 
       if (data.success) {
         setEnrolledCourses(data?.enrolledCourses?.reverse());
