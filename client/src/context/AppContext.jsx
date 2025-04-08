@@ -106,7 +106,7 @@ export const AppContextProvider = (props) => {
     try {
       const token = await getToken();
       const { data } = await axios.get(backendUrl + "/user/enrolled-courses", {
-        Authorization: `Bearer ${token}`,
+        headers: { Authorization: `Bearer ${token}` },
       });
       console.log(data);
 

@@ -30,8 +30,8 @@ const MyEnrollments = () => {
             { headers: { Authorization: `Bearer ${token}` } }
           );
           let totalLectures = calculateNoOfLectures(course);
-          const lectureCompleted = data.progressData
-            ? data.progressData.lectureCompleted.length
+          const lectureCompleted = data?.progressData
+            ? data?.progressData?.lectureCompleted?.length
             : 0;
 
           return { totalLectures, lectureCompleted };
@@ -50,7 +50,7 @@ const MyEnrollments = () => {
     }
   }, [userData]);
   useEffect(() => {
-    if (enrolledCourses.length > 0) {
+    if (enrolledCourses?.length > 0) {
       getCourseProgress();
     }
   }, [enrolledCourses]);

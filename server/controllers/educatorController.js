@@ -2,6 +2,7 @@ import { clerkClient } from "@clerk/express";
 import Course from "../models/Course.js";
 import { v2 as cloudinary } from "cloudinary";
 import { Purchase } from "../models/Purchase.js";
+import User from "../models/User.js";
 
 //update role to educator
 export const updateRoleToEducator = async (req, res) => {
@@ -24,6 +25,7 @@ export const updateRoleToEducator = async (req, res) => {
 export const addCourse = async (req, res) => {
   try {
     const { courseData } = req.body;
+    console.log(courseData);
 
     const imageFile = req.file;
     const educatorId = req.auth.userId;
@@ -61,8 +63,9 @@ export const getEducatorCourses = async (req, res) => {
 export const educatorDashboardData = async (req, res) => {
   try {
     const educator = req.auth.userId;
-    const courses = await Course.find(educator);
+    const courses = await Course.find({ educator });
     const totalCourses = courses.length;
+    console.log(educator);
 
     const courseIds = courses.map((course) => course._id);
 
@@ -90,7 +93,8 @@ export const educatorDashboardData = async (req, res) => {
       );
       students.forEach((student) => {
         enrolledStudentsData.push({
-          courseTitle: course,
+          courseTitle: course.courseTitle,
+          student,
         });
       });
     }
@@ -112,7 +116,7 @@ export const educatorDashboardData = async (req, res) => {
 export const getEnrolledStudentsData = async (req, res) => {
   try {
     const educator = req.auth.userId;
-    const courses = await Course.find(educator);
+    const courses = await Course.find({ educator });
     const courseIds = courses.map((course) => course._id);
 
     const purchases = await Purchase.find({

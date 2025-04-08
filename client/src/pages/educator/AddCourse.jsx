@@ -9,7 +9,7 @@ import axios from "axios";
 const AddCourse = () => {
   const quillRef = useRef(null);
   const editorRef = useRef(null);
-  const { backedUrl, getToken } = useContext(AppContext);
+  const { backendUrl, getToken } = useContext(AppContext);
 
   const [courseTitle, setCourseTitle] = useState("");
   const [coursePrice, setCoursePrice] = useState(0);
@@ -19,7 +19,7 @@ const AddCourse = () => {
   const [showPopup, setShowPopup] = useState(false);
   const [currentChapterId, setCurrentChapterId] = useState(null);
   const [lectureDetails, setLectureDetails] = useState({
-    lecutrTitle: "",
+    lectureTitle: "",
     lectureDuration: "",
     lectureUrl: "",
     isPreviewFree: false,
@@ -89,7 +89,7 @@ const AddCourse = () => {
     );
     setShowPopup(false);
     setLectureDetails({
-      lecutrTitle: "",
+      lectureTitle: "",
       lectureDuration: "",
       lectureUrl: "",
       isPreviewFree: false,
@@ -98,27 +98,29 @@ const AddCourse = () => {
 
   const handleSubmit = async (e) => {
     try {
-      e.prevrntDefault();
+      e.preventDefault();
       if (!image) {
-        toast.error("THumbnail Not Selected");
+        toast.error("Thumbnail Not Selected");
       }
 
       const couseData = {
         courseTitle,
-        courseDescription: quillRef.current.root.innerHTML,
+        courseDescription: quillRef.current?.root.innerHTML,
         coursePrice: Number(coursePrice),
         discount: Number(discount),
         courseContent: chapters,
       };
+      console.log(couseData);
 
       const formData = new FormData();
       formData.append("courseData", JSON.stringify(couseData));
       formData.append("image", image);
+      console.log(formData);
 
       const token = await getToken();
 
       const { data } = await axios.post(
-        backedUrl + "/educator/add-course",
+        backendUrl + "/educator/add-course",
         formData,
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -208,7 +210,7 @@ const AddCourse = () => {
             </label>
           </div>
         </div>
-  
+
         <div className=" flex flex-col gap-1">
           <p>Discount %</p>
           <input
@@ -261,7 +263,7 @@ const AddCourse = () => {
                       className=" flex justify-between items-center mb-2"
                     >
                       <span>
-                        {lecture.lectureDuration + 1} {lecture.lecutrTitle} -
+                        {lecture.lectureDuration + 1} {lecture.lectureTitle} -
                         {lecture.lectureDuration} mins -
                         <a
                           href={lecture.lectureUrl}
@@ -315,10 +317,10 @@ const AddCourse = () => {
                     onChange={(e) =>
                       setLectureDetails({
                         ...lectureDetails,
-                        lecutrTitle: e.target.value,
+                        lectureTitle: e.target.value,
                       })
                     }
-                    value={lectureDetails.lecutrTitle}
+                    value={lectureDetails.lectureTitle}
                     className="mt-1 block w-full border rounded py-1 px-2"
                   />
                 </div>
@@ -363,7 +365,7 @@ const AddCourse = () => {
                         isPreviewFree: e.target.checked,
                       })
                     }
-                    value={lectureDetails.lectureDuration}
+                    value={lectureDetails.isPreviewFree}
                     className="mt-1 scale-125"
                   />
                 </div>
@@ -387,7 +389,6 @@ const AddCourse = () => {
         <button
           type="submit"
           className=" bg-black text-white w-max py-2.5 px-8 rounded my-4"
-          onClick={addLecture}
         >
           Add
         </button>

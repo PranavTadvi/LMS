@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { AppContext } from "../../context/AppCOntext";
+import { AppContext } from "../../context/AppContext";
 import SearchBar from "../../components/student/SearchBar";
 import { useParams } from "react-router-dom";
 import CourseCard from "../../components/student/CourseCard";
@@ -12,7 +12,7 @@ const CoursesList = () => {
   const [filteredCourse, setFilteredCourse] = useState([]);
   useEffect(() => {
     if (allCourses && allCourses.length > 0) {
-      const tempCourses = allCourses.slice();
+      const tempCourses = allCourses?.slice();
 
       input
         ? setFilteredCourse(
@@ -58,7 +58,7 @@ const CoursesList = () => {
           </div>
         )}
         <div className=" grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 my-16 gap-3 px-2 md:p-0">
-          {filteredCourse.map((course, index) => (
+          {filteredCourse?.map((course, index) => (
             <CourseCard key={index} course={course} />
           ))}
         </div>

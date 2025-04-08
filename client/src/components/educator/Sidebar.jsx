@@ -15,7 +15,7 @@ const Sidebar = () => {
     },
     {
       name: "Student Enrolled",
-      path: "/educator/student-enrolled",
+      path: "/educator/enrolled-students",
       icon: assets.person_tick_icon,
     },
   ];

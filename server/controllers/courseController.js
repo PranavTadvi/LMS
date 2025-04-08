@@ -23,13 +23,13 @@ export const getCourseId = async (req, res) => {
 
     //Remove lectureUrl if isPreviewFree is false
 
-    courseData.courseContent.forEach((chapter) =>
+    courseData.courseContent.forEach((chapter) => {
       chapter.chapterContent.forEach((lecture) => {
         if (!lecture.isPreviewFree) {
           lecture.lectureUrl = "";
         }
-      })
-    );
+      });
+    });
 
     res.json({ success: true, courseData });
   } catch (error) {

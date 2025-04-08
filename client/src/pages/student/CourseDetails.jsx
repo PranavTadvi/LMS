@@ -147,7 +147,7 @@ const CourseDetails = () => {
           <div className="pt-8 text-gray-800">
             <h2 className="text-xl font-semibold">Course Structure</h2>
             <div className="pt-5">
-              {courseData.courseContent.map((chapter, index) => (
+              {courseData?.courseContent?.map((chapter, index) => (
                 <div
                   key={index}
                   className=" border border-gray-300 bg-white mb-2 rounded"
@@ -179,7 +179,7 @@ const CourseDetails = () => {
                     }`}
                   >
                     <ul className=" list-disc md:pl-10 pl-4 pr-4 py-2 text-gray-600 border-t border-gray-300">
-                      {chapter.chapterContent.map((lecture, i) => (
+                      {chapter?.chapterContent?.map((lecture, i) => (
                         <li key={i} className=" flex items-start gap-2 py-1">
                           <img
                             src={assets.play_icon}
