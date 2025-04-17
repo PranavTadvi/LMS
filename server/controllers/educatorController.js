@@ -65,7 +65,6 @@ export const educatorDashboardData = async (req, res) => {
     const educator = req.auth.userId;
     const courses = await Course.find({ educator });
     const totalCourses = courses.length;
-    console.log(educator);
 
     const courseIds = courses.map((course) => course._id);
 
@@ -118,6 +117,7 @@ export const getEnrolledStudentsData = async (req, res) => {
     const educator = req.auth.userId;
     const courses = await Course.find({ educator });
     const courseIds = courses.map((course) => course._id);
+    console.log(courses);
 
     const purchases = await Purchase.find({
       courseId: { $in: courseIds },
