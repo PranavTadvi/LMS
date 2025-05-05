@@ -5,13 +5,32 @@ import { Purchase } from "../models/Purchase.js";
 import User from "../models/User.js";
 
 //update role to educator
+// export const updateRoleToEducator = async (req, res) => {
+//   try {
+//     const userId = req.auth.userId;
+//     await clerkClient.users.updateUserMetadata(userId, {
+//       publicMetadata: {
+//         role: "educator",
+//       },
+//     });
+
+//     res.json({ success: true, message: "You can publish a course now" });
+//   } catch (error) {
+//     res.json({ success: false, message: error.message });
+//   }
+// };
+
 export const updateRoleToEducator = async (req, res) => {
   try {
-    const userId = req.auth.userId;
+    const userId = req.auth?.userId;
+    if (!userId) {
+      return res
+        .status(400)
+        .json({ success: false, message: "User ID not found in auth token." });
+    }
+
     await clerkClient.users.updateUserMetadata(userId, {
-      publicMetadata: {
-        role: "educator",
-      },
+      publicMetadata: { role: "educator" },
     });
 
     res.json({ success: true, message: "You can publish a course now" });

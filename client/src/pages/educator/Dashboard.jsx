@@ -8,7 +8,7 @@ import { toast } from "react-toastify";
 const Dashboard = () => {
   const { currency, backendUrl, isEducator, getToken } = useContext(AppContext);
   const [dashboardData, setDashboardData] = useState(null);
-  
+
   const fetchDashboardData = async () => {
     try {
       const token = await getToken();

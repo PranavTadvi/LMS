@@ -20,7 +20,7 @@ const Navbar = () => {
       }
       const token = await getToken();
 
-      const { data } = await axios.get(backendUrl + "/educator/update-role", {
+      const { data } = await axios.post(backendUrl + "/educator/update-role", {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (data.seccess) {
