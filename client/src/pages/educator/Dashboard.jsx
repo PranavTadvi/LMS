@@ -8,6 +8,7 @@ import { toast } from "react-toastify";
 const Dashboard = () => {
   const { currency, backendUrl, isEducator, getToken } = useContext(AppContext);
   const [dashboardData, setDashboardData] = useState(null);
+  
   const fetchDashboardData = async () => {
     try {
       const token = await getToken();
@@ -59,7 +60,7 @@ const Dashboard = () => {
                 {currency}
                 {dashboardData.totalEarnings}
               </p>
-              <p className=" text-base text-gray-500">Total Enrollments</p>
+              <p className=" text-base text-gray-500">Total Earnings</p>
             </div>
           </div>
         </div>

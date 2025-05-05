@@ -37,7 +37,6 @@ export const userEnrolledCourses = async (req, res) => {
 export const purchaseCourse = async (req, res) => {
   try {
     const { courseId } = req.body;
-    console.log(courseId);
 
     const { origin } = req.headers;
     const userId = req.auth.userId;
@@ -52,10 +51,9 @@ export const purchaseCourse = async (req, res) => {
       userId,
       amount: (
         courseData.coursePrice -
-        courseData.discount * courseData.coursePrice / 100
+        (courseData.discount * courseData.coursePrice) / 100
       ).toFixed(2),
     };
-    console.log(purchaseData);
 
     const newPurchase = await Purchase.create(purchaseData);
 

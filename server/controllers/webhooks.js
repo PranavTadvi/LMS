@@ -79,7 +79,6 @@ export const stripeWebhooks = async (req, res) => {
     case "payment_intent.succeeded": {
       const paymentIntent = event.data.object;
       const paymentIntentId = paymentIntent.id;
-      console.log("Event: ", event.type);
 
       const session = await stripeInstance.checkout.sessions.list({
         payment_intent: paymentIntentId,
@@ -102,7 +101,6 @@ export const stripeWebhooks = async (req, res) => {
 
       purchaseData.status = "completed";
       const myPayment = await purchaseData.save();
-      console.log("My Py", myPayment);
 
       break;
     }

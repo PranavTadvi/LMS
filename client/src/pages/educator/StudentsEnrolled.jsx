@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { dummyStudentEnrolled } from "../../assets/assets";
+// import { dummyStudentEnrolled } from "../../assets/assets";
 import Loading from "../../components/student/Loading";
 import { AppContext } from "../../context/AppContext";
 import axios from "axios";
@@ -8,6 +8,7 @@ import { toast } from "react-toastify";
 const StudentsEnrolled = () => {
   const [enrolledStudents, setEnrolledStudents] = useState(null);
   const { backendUrl, getToken, isEducator } = useContext(AppContext);
+
   const fetchEnrolledStudents = async () => {
     try {
       const token = await getToken();
