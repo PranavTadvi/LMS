@@ -33,7 +33,7 @@ app.use("/api/user", express.json(), userRouter);
 
 app.post("/stripe", express.raw({ type: "application/json" }), stripeWebhooks);
 
-//Port
+//Port1
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => console.log(`Server is running on PORT ${PORT}`));
