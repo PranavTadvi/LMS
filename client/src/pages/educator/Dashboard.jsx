@@ -58,7 +58,7 @@ const Dashboard = () => {
             <div>
               <p className="text-2xl font-medium text-gray-600">
                 {currency}
-                {dashboardData.totalEarnings}
+                {dashboardData.totalEarnings.toFixed(2)}
               </p>
               <p className=" text-base text-gray-500">Total Earnings</p>
             </div>
